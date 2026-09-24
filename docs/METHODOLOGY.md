@@ -23,7 +23,7 @@ already did.
 
 The alternative is to make the schedule a piece of data in a datastore, and let
 whatever process happens to be alive read it. That is what BullMQ does, and it
-is why the restart requirement becomes almost free.
+is why surviving a restart becomes almost free.
 
 ## How scheduling works
 
@@ -161,7 +161,7 @@ campaign asks for.
 
 ## Hourly rate limiting
 
-The requirement is a per sender hourly cap that stays correct across multiple
+The goal is a per sender hourly cap that stays correct across multiple
 concurrent jobs and multiple worker processes.
 
 The naive version is broken:

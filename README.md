@@ -341,7 +341,7 @@ The one deliberate exception is stalled recovery, described above. There is a
 window a few milliseconds wide between SMTP accepting a message and the status
 write landing; a process that dies exactly there will have its row recovered and
 re-sent, producing a duplicate. The alternative is dropping that email entirely.
-For a scheduler whose stated requirement is not losing jobs, a rare duplicate
+For a scheduler whose core promise is not losing jobs, a rare duplicate
 after a crash is the better failure, and it is the only path in the system that
 can produce one.
 

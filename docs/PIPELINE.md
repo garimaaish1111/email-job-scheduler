@@ -71,7 +71,7 @@ email-job-scheduler/
 The worker will run as its own process (`src/worker.ts`), separate from the API
 (`src/index.ts`). Two reasons. A slow SMTP call inside the API process would
 block the event loop for HTTP requests, and separating them makes the restart
-requirement demonstrable: the API can be killed while the worker keeps sending,
+guarantee demonstrable: the API can be killed while the worker keeps sending,
 and the worker can be killed and restarted without losing the schedule.
 
 ## Stage 3: Infrastructure
@@ -88,7 +88,7 @@ Three settings in that file are load bearing:
 
 `redis-server --appendonly yes` enables the append only file. Every write is
 appended to disk, so the delayed job set survives a container restart. This is
-the persistence requirement, and without it a restart of the Redis container
+restart persistence, and without it a restart of the Redis container
 would erase every scheduled job.
 
 Named volumes (`redis_data`, `pg_data`, `es_data`) keep data outside the
@@ -156,7 +156,7 @@ values SCHEDULED, SENDING, SENT, FAILED and RATE_LIMITED.
 
 One Email row is created per recipient rather than storing a JSON array of
 addresses on the campaign. Per recipient status, send time, failure reason and
-retry count are all requirements, and none of them are possible with a blob.
+retry count are all needed, and none of them are possible with a blob.
 
 The SENDING status is not cosmetic. It is the value the idempotency guard writes
 when it claims a row, described in Stage 7.
