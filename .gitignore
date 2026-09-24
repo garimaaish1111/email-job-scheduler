@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+dist/
+.next/
+out/
+uploads/
+*.log
+.DS_Store
+
+docs/CREDENTIALS_SCRATCH.md
+docs/BUILD_PLAN_*.md

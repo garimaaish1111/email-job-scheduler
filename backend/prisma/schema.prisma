@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(uuid())
+  googleId      String     @unique
+  email         String     @unique
+  name          String
+  avatarUrl     String?
+  slackWebhook  String?
+  slackTeamName String?
+  slackChannel  String?
+  createdAt     DateTime   @default(now())
+  campaigns     Campaign[]
+}
+
+model Sender {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  smtpUser  String
+  smtpPass  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  emails    Email[]
+}
+
+model Campaign {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject         String
+  body            String
+  startTime       DateTime
+  delayBetweenMs  Int
+  hourlyLimit     Int
+  totalRecipients Int
+  createdAt       DateTime @default(now())
+  emails          Email[]
+
+  @@index([userId, createdAt])
+}
+
+enum EmailStatus {
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
+  RATE_LIMITED
+}
+
+model Email {
+  id             String      @id @default(uuid())
+  campaignId     String
+  campaign       Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         Sender      @relation(fields: [senderId], references: [id])
+  recipientEmail String
+  subject        String
+  body           String
+  status         EmailStatus @default(SCHEDULED)
+  scheduledAt    DateTime
+  sentAt         DateTime?
+  attempts       Int         @default(0)
+  errorMessage   String?
+  messageId      String?
+  previewUrl     String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([status, scheduledAt])
+  @@index([campaignId, status])
+  @@index([senderId, sentAt])
+  @@index([recipientEmail])
+}
